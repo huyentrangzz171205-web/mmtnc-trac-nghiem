@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ứng Dụng Trắc Nghiệm Ôn Tập</title>
+    <title>Ứng Dụng Trắc Nghiệm Mạng Máy Tính Nâng Cao</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -15,7 +15,7 @@
         <!-- Tiêu đề ứng dụng -->
         <header class="text-center mb-8">
             <h1 class="text-3xl font-bold text-indigo-600 mb-2">Trắc Nghiệm Mạng Máy Tính Nâng Cao</h1>
-            <p class="text-slate-500">Ôn tập kiến thức, tương tác trực tiếp và quản lý câu hỏi dễ dàng</p>
+            <p class="text-slate-500">Ôn tập kiến thức, tương tác trực tiếp, chọn file ảnh trực tiếp từ thiết bị</p>
         </header>
 
         <!-- Thanh điều hướng Tab -->
@@ -36,19 +36,25 @@
                 <span id="score-display" class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full font-medium">Điểm: 0</span>
             </div>
 
-            <!-- Nội dung câu hỏi -->
+            <!-- Nội dung câu hỏi & Hình ảnh minh họa -->
             <div class="mb-6">
+                <!-- Vùng hiển thị ảnh minh họa -->
+                <div id="question-image-container" class="mb-4 hidden text-center">
+                    <img id="question-image" src="" alt="Minh họa câu hỏi" class="max-h-64 mx-auto rounded-xl border border-slate-200 shadow-sm object-contain">
+                </div>
+
                 <h2 id="question-title" class="text-xl font-bold text-slate-800 mb-4 leading-relaxed">Đang tải câu hỏi...</h2>
+                
                 <!-- Danh sách đáp án -->
                 <div id="options-container" class="space-y-3">
-                    <!-- Được render bằng JavaScript -->
+                    <!-- Render JS -->
                 </div>
             </div>
 
             <!-- Khu vực giải thích đáp án -->
             <div id="explanation-box" class="hidden mb-6 p-4 rounded-xl text-sm border"></div>
 
-            <!-- Nút chuyển câu / Hoàn thành -->
+            <!-- Nút chuyển câu -->
             <div class="flex justify-end">
                 <button id="next-btn" onclick="nextQuestion()" class="hidden bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-6 py-2.5 rounded-xl transition-all shadow-md">
                     Câu tiếp theo ➡️
@@ -63,10 +69,32 @@
                 <h2 id="form-title" class="text-xl font-bold text-slate-800 mb-4">➕ Thêm Câu Hỏi Mới</h2>
                 <form id="question-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
                     <input type="hidden" id="edit-index" value="-1">
+                    <input type="hidden" id="base64-image" value="">
+
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-1">Nội dung câu hỏi:</label>
                         <textarea id="input-question" required rows="3" class="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Nhập câu hỏi..."></textarea>
                     </div>
+
+                    <!-- Khu vực chọn ảnh từ máy / điện thoại -->
+                    <div class="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100">
+                        <label class="block text-sm font-bold text-indigo-900 mb-2">📷 Hình ảnh minh họa (Tùy chọn):</label>
+                        <div class="flex flex-col md:flex-row gap-3 items-start md:items-center">
+                            <input type="file" id="input-file" accept="image/*" onchange="handleFileSelect(event)" class="text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 cursor-pointer">
+                            <span class="text-xs text-slate-400">hoặc dán Link ảnh:</span>
+                            <input type="url" id="input-image-url" oninput="handleUrlInput(event)" class="flex-1 w-full px-3 py-1.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="https://example.com/image.jpg">
+                        </div>
+                        
+                        <!-- Vùng xem trước ảnh -->
+                        <div id="preview-container" class="mt-3 hidden">
+                            <p class="text-xs text-slate-500 mb-1">Ảnh xem trước:</p>
+                            <div class="relative inline-block">
+                                <img id="preview-img" src="" class="max-h-32 rounded-lg border border-slate-300 shadow-sm object-contain">
+                                <button type="button" onclick="clearImage()" class="absolute -top-2 -right-2 bg-rose-500 text-white rounded-full w-6 h-6 text-xs flex items-center justify-center shadow-md">✕</button>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Đáp án A:</label>
@@ -126,39 +154,28 @@
 
     <!-- JavaScript xử lý logic -->
     <script>
-        // Dữ liệu mặc định
         const defaultQuestions = [
             {
                 question: "Mạng không dây là hệ thống các thiết bị có khả năng giao tiếp thông qua gì?",
-                options: [
-                    "Cáp quang đa mốt",
-                    "Sóng điện từ",
-                    "Đường truyền cáp đồng trục",
-                    "Tín hiệu dòng điện trực tiếp"
-                ],
+                image: "",
+                options: ["Cáp quang đa mốt", "Sóng điện từ", "Đường truyền cáp đồng trục", "Tín hiệu dòng điện trực tiếp"],
                 correct: 1,
                 explanation: "Mạng không dây truyền tải dữ liệu thông qua sóng điện từ (như sóng radio, hồng ngoại, vi ba) mà không cần cáp vật lý."
             },
             {
                 question: "Câu hỏi trọng tâm đặt ra trong slide khái niệm mạng không dây nhằm khám phá khía cạnh nào?",
-                options: [
-                    "Chi phí lắp đặt và bảo trì phần cứng.",
-                    "Lý do tồn tại (tại sao phải có) và lợi ích của mạng không dây.",
-                    "Tốc độ truyền tải tối đa của sóng điện từ.",
-                    "Các chuẩn bảo mật an toàn thông tin mạng."
-                ],
+                image: "",
+                options: ["Chi phí lắp đặt và bảo trì phần cứng.", "Lý do tồn tại (tại sao phải có) và lợi ích của mạng không dây.", "Tốc độ truyền tải tối đa của sóng điện từ.", "Các chuẩn bảo mật an toàn thông tin mạng."],
                 correct: 1,
                 explanation: "Slide đặt ra câu hỏi 'Tại sao phải có mạng không dây? Lợi ích của mạng không dây là gì?' để tìm hiểu lý do tồn tại và lợi ích thực tiễn."
             }
         ];
 
-        // Lấy câu hỏi từ LocalStorage hoặc dùng mặc định
         let questions = JSON.parse(localStorage.getItem('mmtnc_questions')) || defaultQuestions;
         let currentIdx = 0;
         let score = 0;
         let answeredCurrent = false;
 
-        // Chuyển đổi tab
         function switchTab(tab) {
             const quizSec = document.getElementById('section-quiz');
             const manageSec = document.getElementById('section-manage');
@@ -180,7 +197,6 @@
             }
         }
 
-        // Tải câu hỏi cho màn hình Quiz
         function loadQuiz() {
             answeredCurrent = false;
             document.getElementById('next-btn').classList.add('hidden');
@@ -190,17 +206,25 @@
                 document.getElementById('question-progress').innerText = "Trống";
                 document.getElementById('question-title').innerText = "Hiện chưa có câu hỏi nào. Vui lòng sang tab 'Quản Lý Câu Hỏi' để thêm mới!";
                 document.getElementById('options-container').innerHTML = "";
+                document.getElementById('question-image-container').classList.add('hidden');
                 return;
             }
 
-            if (currentIdx >= questions.length) {
-                currentIdx = 0;
-            }
+            if (currentIdx >= questions.length) currentIdx = 0;
 
             const q = questions[currentIdx];
             document.getElementById('question-progress').innerText = `Câu ${currentIdx + 1} / ${questions.length}`;
             document.getElementById('score-display').innerText = `Điểm: ${score}`;
             document.getElementById('question-title').innerText = q.question;
+
+            const imgContainer = document.getElementById('question-image-container');
+            const imgEl = document.getElementById('question-image');
+            if (q.image && q.image.trim() !== "") {
+                imgEl.src = q.image;
+                imgContainer.classList.remove('hidden');
+            } else {
+                imgContainer.classList.add('hidden');
+            }
 
             let html = "";
             q.options.forEach((opt, idx) => {
@@ -209,7 +233,6 @@
             document.getElementById('options-container').innerHTML = html;
         }
 
-        // Xử lý chọn đáp án
         function selectAnswer(selectedIdx) {
             if (answeredCurrent) return;
             answeredCurrent = true;
@@ -244,16 +267,51 @@
             document.getElementById('next-btn').classList.remove('hidden');
         }
 
-        // Chuyển câu tiếp theo
         function nextQuestion() {
             currentIdx++;
-            if (currentIdx >= questions.length) {
-                currentIdx = 0;
-            }
+            if (currentIdx >= questions.length) currentIdx = 0;
             loadQuiz();
         }
 
-        // Render danh sách quản lý câu hỏi
+        // Xử lý chọn file ảnh từ máy
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const base64Str = evt.target.result;
+                document.getElementById('base64-image').value = base64Str;
+                document.getElementById('input-image-url').value = ""; // Xóa url nếu đã chọn file
+                showPreview(base64Str);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Xử lý khi gõ URL ảnh
+        function handleUrlInput(e) {
+            const url = e.target.value;
+            if (url) {
+                document.getElementById('base64-image').value = url;
+                document.getElementById('input-file').value = ""; // Clear file chọn
+                showPreview(url);
+            } else {
+                clearImage();
+            }
+        }
+
+        function showPreview(src) {
+            document.getElementById('preview-img').src = src;
+            document.getElementById('preview-container').classList.remove('hidden');
+        }
+
+        function clearImage() {
+            document.getElementById('base64-image').value = "";
+            document.getElementById('input-image-url').value = "";
+            document.getElementById('input-file').value = "";
+            document.getElementById('preview-container').classList.add('hidden');
+        }
+
         function renderManageList() {
             const listContainer = document.getElementById('questions-list');
             if (questions.length === 0) {
@@ -273,7 +331,8 @@
                             </div>
                         </div>
                         <p class="font-medium text-slate-800">${q.question}</p>
-                        <ul class="text-sm text-slate-600 grid grid-cols-1 md:grid-cols-2 gap-1 pl-4 list-disc">
+                        ${q.image ? `<div class="mt-2"><img src="${q.image}" class="max-h-24 rounded border border-slate-200 object-contain"></div>` : ''}
+                        <ul class="text-sm text-slate-600 grid grid-cols-1 md:grid-cols-2 gap-1 pl-4 list-disc mt-2">
                             ${q.options.map((o, oIdx) => `<li class="${oIdx === q.correct ? 'text-emerald-700 font-semibold' : ''}">${o}</li>`).join('')}
                         </ul>
                     </div>
@@ -282,11 +341,11 @@
             listContainer.innerHTML = html;
         }
 
-        // Thêm hoặc Cập nhật câu hỏi từ form
         function handleFormSubmit(e) {
             e.preventDefault();
             const editIdx = parseInt(document.getElementById('edit-index').value);
             const questionText = document.getElementById('input-question').value;
+            const imageUrl = document.getElementById('base64-image').value;
             const options = [
                 document.getElementById('input-opt-0').value,
                 document.getElementById('input-opt-1').value,
@@ -296,7 +355,7 @@
             const correct = parseInt(document.getElementById('input-correct').value);
             const explanation = document.getElementById('input-explanation').value;
 
-            const newQ = { question: questionText, options, correct, explanation };
+            const newQ = { question: questionText, image: imageUrl, options, correct, explanation };
 
             if (editIdx === -1) {
                 questions.push(newQ);
@@ -304,17 +363,28 @@
                 questions[editIdx] = newQ;
             }
 
-            localStorage.setItem('mmtnc_questions', JSON.stringify(questions));
-            resetForm();
-            renderManageList();
-            alert("Đã lưu câu hỏi thành công!");
+            try {
+                localStorage.setItem('mmtnc_questions', JSON.stringify(questions));
+                resetForm();
+                renderManageList();
+                alert("Đã lưu câu hỏi thành công!");
+            } catch (err) {
+                alert("Bộ nhớ trình duyệt đã đầy do lưu ảnh quá nặng! Hãy xóa bớt câu hỏi hoặc chọn file ảnh nhẹ hơn.");
+            }
         }
 
-        // Sửa câu hỏi
         function editQuestion(idx) {
             const q = questions[idx];
             document.getElementById('edit-index').value = idx;
             document.getElementById('input-question').value = q.question;
+            document.getElementById('base64-image').value = q.image || "";
+            
+            if (q.image) {
+                showPreview(q.image);
+            } else {
+                clearImage();
+            }
+
             for (let i = 0; i < 4; i++) {
                 document.getElementById(`input-opt-${i}`).value = q.options[i];
             }
@@ -327,7 +397,6 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Xóa câu hỏi
         function deleteQuestion(idx) {
             if (confirm("Bạn có chắc chắn muốn xóa câu hỏi này không?")) {
                 questions.splice(idx, 1);
@@ -336,16 +405,15 @@
             }
         }
 
-        // Reset form
         function resetForm() {
             document.getElementById('question-form').reset();
             document.getElementById('edit-index').value = "-1";
+            clearImage();
             document.getElementById('form-title').innerText = "➕ Thêm Câu Hỏi Mới";
             document.getElementById('submit-btn').innerText = "Lưu Câu Hỏi";
             document.getElementById('cancel-edit-btn').classList.add('hidden');
         }
 
-        // Khôi phục mặc định
         function resetToDefaultQuestions() {
             if (confirm("Khôi phục lại các câu hỏi mặc định ban đầu?")) {
                 questions = [...defaultQuestions];
@@ -355,7 +423,6 @@
             }
         }
 
-        // Khởi chạy ban đầu
         loadQuiz();
     </script>
 </body>
