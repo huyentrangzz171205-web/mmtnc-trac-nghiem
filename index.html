@@ -3,175 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Trắc Nghiệm Interactive & Quản Lý Câu Hỏi</title>
+    <title>Ứng Dụng Trắc Nghiệm Ôn Tập</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts Inter & FontAwesome Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        .option-btn {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .fade-in {
-            animation: fadeIn 0.3s ease-in-out forwards;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col items-center justify-start p-3 sm:p-6">
+<body class="bg-slate-100 min-h-screen text-slate-800">
 
-    <!-- Main Container -->
-    <main class="w-full max-w-3xl bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden my-auto">
+    <!-- Container chính -->
+    <div class="max-w-3xl mx-auto px-4 py-8">
         
-        <!-- Header Bar -->
-        <header class="bg-gradient-to-r from-sky-600 to-indigo-600 p-5 text-white text-center shadow-sm">
-            <div class="flex items-center justify-center gap-2 mb-1">
-                <i class="fa-solid fa-graduation-cap text-2xl sm:text-3xl"></i>
-                <h1 class="text-xl sm:text-2xl font-bold">Hệ Thống Ôn Tập Trắc Nghiệm</h1>
-            </div>
-            <p class="text-sky-100 text-xs sm:text-sm">Kỹ Nghệ Phần Mềm & Mạng Không Dây</p>
+        <!-- Tiêu đề ứng dụng -->
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-indigo-600 mb-2">Trắc Nghiệm Mạng Máy Tính Nâng Cao</h1>
+            <p class="text-slate-500">Ôn tập kiến thức, tương tác trực tiếp và quản lý câu hỏi dễ dàng</p>
         </header>
 
-        <!-- Navigation Tabs -->
-        <nav class="flex border-b border-slate-200 bg-slate-50 text-sm font-semibold">
-            <button id="tab-quiz-btn" onclick="switchTab('quiz')" class="flex-1 py-3 px-4 text-center border-b-2 border-sky-600 text-sky-600 bg-white transition-all flex items-center justify-center gap-2">
-                <i class="fa-solid fa-pen-to-square"></i> Làm Quiz
+        <!-- Thanh điều hướng Tab -->
+        <div class="flex justify-center mb-6 space-x-2">
+            <button onclick="switchTab('quiz')" id="tab-quiz" class="px-6 py-2.5 rounded-lg font-medium transition-all bg-indigo-600 text-white shadow-md">
+                Làm Trắc Nghiệm
             </button>
-            <button id="tab-manage-btn" onclick="switchTab('manage')" class="flex-1 py-3 px-4 text-center border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition-all flex items-center justify-center gap-2">
-                <i class="fa-solid fa-list-check"></i> Thêm & Quản Lý Câu Hỏi (<span id="question-count-badge">0</span>)
+            <button onclick="switchTab('manage')" id="tab-manage" class="px-6 py-2.5 rounded-lg font-medium transition-all bg-white text-slate-600 hover:bg-slate-50 shadow-sm border border-slate-200">
+                Quản Lý Câu Hỏi
             </button>
-        </nav>
+        </div>
 
-        <!-- TAB 1: QUIZ SCREEN -->
-        <section id="quiz-tab" class="p-4 sm:p-8">
-            <!-- Stats Bar -->
-            <div id="quiz-header-bar" class="mb-6">
-                <div class="flex justify-between items-center text-xs sm:text-sm font-semibold text-slate-500 mb-2">
-                    <span id="question-tracker">Câu hỏi 1 / 5</span>
-                    <span id="score-tracker" class="text-sky-600 bg-sky-50 px-2.5 py-1 rounded-full border border-sky-200">Điểm: 0</span>
-                </div>
-                <!-- Progress Bar -->
-                <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                    <div id="progress-bar" class="bg-sky-600 h-full w-0 transition-all duration-300"></div>
+        <!-- MÀN HÌNH 1: LÀM QUIZ -->
+        <div id="section-quiz" class="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-slate-100">
+            <!-- Thông tin tiến độ -->
+            <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-100 text-sm">
+                <span id="question-progress" class="font-semibold text-indigo-600">Câu 1 / 5</span>
+                <span id="score-display" class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full font-medium">Điểm: 0</span>
+            </div>
+
+            <!-- Nội dung câu hỏi -->
+            <div class="mb-6">
+                <h2 id="question-title" class="text-xl font-bold text-slate-800 mb-4 leading-relaxed">Đang tải câu hỏi...</h2>
+                <!-- Danh sách đáp án -->
+                <div id="options-container" class="space-y-3">
+                    <!-- Được render bằng JavaScript -->
                 </div>
             </div>
 
-            <!-- Question & Answers Container -->
-            <div id="quiz-content">
-                <h2 id="question-text" class="text-base sm:text-lg font-bold text-slate-800 mb-5 leading-relaxed">
-                    <!-- Nội dung câu hỏi -->
-                </h2>
+            <!-- Khu vực giải thích đáp án -->
+            <div id="explanation-box" class="hidden mb-6 p-4 rounded-xl text-sm border"></div>
 
-                <div id="options-container" class="space-y-3 mb-6">
-                    <!-- Các phương án A B C D -->
-                </div>
-
-                <!-- Instant Feedback Box -->
-                <div id="feedback-box" class="hidden p-4 rounded-xl border mb-6 fade-in">
-                    <div class="flex items-center gap-2 font-bold mb-1" id="feedback-status"></div>
-                    <p id="explanation-text" class="text-xs sm:text-sm leading-relaxed text-slate-700"></p>
-                </div>
-
-                <!-- Navigation Controls -->
-                <div class="flex justify-between items-center pt-2 border-t border-slate-100">
-                    <button id="prev-btn" onclick="prevQuestion()" class="px-4 py-2 text-xs sm:text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">
-                        <i class="fa-solid fa-arrow-left mr-1"></i> Câu trước
-                    </button>
-                    <button id="next-btn" onclick="nextQuestion()" disabled class="ml-auto px-5 py-2.5 bg-sky-600 hover:bg-sky-700 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white text-xs sm:text-sm font-semibold rounded-lg shadow-sm transition-all">
-                        Câu tiếp theo <i class="fa-solid fa-arrow-right ml-1"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Empty Question Warning -->
-            <div id="no-questions-msg" class="hidden text-center py-12">
-                <i class="fa-solid fa-folder-open text-4xl text-slate-300 mb-3"></i>
-                <h3 class="text-lg font-bold text-slate-700">Chưa có câu hỏi nào!</h3>
-                <p class="text-slate-500 text-sm mb-4">Vui lòng chuyển sang tab "Thêm & Quản lý" để tạo câu hỏi mới hoặc khôi phục dữ liệu mặc định.</p>
-                <button onclick="restoreDefaultQuestions()" class="px-4 py-2 bg-sky-600 text-white rounded-lg text-sm font-semibold">Tải Bộ Câu Hỏi Mặc Định</button>
-            </div>
-
-            <!-- Quiz Result Screen -->
-            <div id="result-screen" class="hidden text-center py-6 fade-in">
-                <div class="w-16 h-16 bg-sky-100 text-sky-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl shadow-inner">
-                    <i class="fa-solid fa-trophy"></i>
-                </div>
-                <h2 class="text-xl sm:text-2xl font-bold text-slate-800 mb-2">Hoàn Thành Bài Kiểm Tra!</h2>
-                <p class="text-slate-600 text-sm mb-6">Kết quả ghi nhận của bạn:</p>
-
-                <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 max-w-sm mx-auto mb-6">
-                    <div class="text-4xl font-extrabold text-sky-600 mb-1" id="final-score">0/0</div>
-                    <div class="text-xs font-semibold text-slate-500" id="final-percentage">Tỷ lệ chính xác: 0%</div>
-                    <div id="feedback-message" class="mt-4 pt-3 border-t border-slate-200 text-xs sm:text-sm font-medium"></div>
-                </div>
-
-                <button onclick="restartQuiz()" class="px-6 py-2.5 bg-sky-600 text-white font-semibold rounded-xl shadow-md hover:bg-sky-700 transition-all text-sm">
-                    <i class="fa-solid fa-rotate-right mr-1.5"></i> Làm Lại Bài Thi
+            <!-- Nút chuyển câu / Hoàn thành -->
+            <div class="flex justify-end">
+                <button id="next-btn" onclick="nextQuestion()" class="hidden bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-6 py-2.5 rounded-xl transition-all shadow-md">
+                    Câu tiếp theo ➡️
                 </button>
             </div>
-        </section>
+        </div>
 
-
-        <!-- TAB 2: MANAGE / ADD QUESTIONS SCREEN -->
-        <section id="manage-tab" class="hidden p-4 sm:p-8">
-            <!-- Add / Edit Question Form -->
-            <div class="bg-slate-50 p-4 sm:p-6 rounded-xl border border-slate-200 mb-8">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 id="form-title" class="text-base sm:text-lg font-bold text-slate-800 flex items-center gap-2">
-                        <i class="fa-solid fa-square-plus text-sky-600"></i> Thêm Câu Hỏi Mới
-                    </h3>
-                    <button id="cancel-edit-btn" onclick="cancelEdit()" class="hidden text-xs text-rose-600 hover:text-rose-800 font-semibold bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-200">
-                        <i class="fa-solid fa-xmark mr-1"></i> Hủy Chỉnh Sửa
-                    </button>
-                </div>
-                
-                <form id="add-question-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
+        <!-- MÀN HÌNH 2: QUẢN LÝ CÂU HỎI (THÊM / SỬA / XÓA) -->
+        <div id="section-manage" class="hidden space-y-6">
+            <!-- Form Thêm / Sửa câu hỏi -->
+            <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-slate-100">
+                <h2 id="form-title" class="text-xl font-bold text-slate-800 mb-4">➕ Thêm Câu Hỏi Mới</h2>
+                <form id="question-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
                     <input type="hidden" id="edit-index" value="-1">
-
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nội dung câu hỏi *</label>
-                        <textarea id="form-question" required placeholder="Nhập nội dung câu hỏi trắc nghiệm..." class="w-full p-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none" rows="2"></textarea>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Nội dung câu hỏi:</label>
+                        <textarea id="input-question" required rows="3" class="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Nhập câu hỏi..."></textarea>
                     </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Đáp án A *</label>
-                            <input type="text" id="form-opt-0" required placeholder="Phương án A" class="w-full p-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Đáp án A:</label>
+                            <input type="text" id="input-opt-0" required class="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Đáp án A">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Đáp án B *</label>
-                            <input type="text" id="form-opt-1" required placeholder="Phương án B" class="w-full p-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Đáp án B:</label>
+                            <input type="text" id="input-opt-1" required class="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Đáp án B">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Đáp án C *</label>
-                            <input type="text" id="form-opt-2" required placeholder="Phương án C" class="w-full p-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Đáp án C:</label>
+                            <input type="text" id="input-opt-2" required class="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Đáp án C">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Đáp án D *</label>
-                            <input type="text" id="form-opt-3" required placeholder="Phương án D" class="w-full p-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Đáp án D:</label>
+                            <input type="text" id="input-opt-3" required class="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Đáp án D">
                         </div>
                     </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Đáp án chính xác *</label>
-                            <select id="form-correct" class="w-full p-2 text-sm border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Đáp án đúng:</label>
+                            <select id="input-correct" class="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                                 <option value="0">Đáp án A</option>
                                 <option value="1">Đáp án B</option>
                                 <option value="2">Đáp án C</option>
@@ -179,425 +96,267 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Giải thích đáp án</label>
-                            <input type="text" id="form-explanation" placeholder="Lý do vì sao đáp án này đúng..." class="w-full p-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Giải thích chi tiết:</label>
+                            <input type="text" id="input-explanation" required class="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Nhập lý do đúng...">
                         </div>
                     </div>
-
-                    <button id="submit-form-btn" type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg shadow transition-all text-sm flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-plus"></i> Lưu & Thêm Câu Hỏi
-                    </button>
+                    <div class="flex space-x-3 pt-2">
+                        <button type="submit" id="submit-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-6 py-2.5 rounded-xl transition-all shadow-md">
+                            Lưu Câu Hỏi
+                        </button>
+                        <button type="button" id="cancel-edit-btn" onclick="resetForm()" class="hidden bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium px-6 py-2.5 rounded-xl transition-all">
+                            Hủy
+                        </button>
+                    </div>
                 </form>
             </div>
 
-            <!-- Existing Questions List -->
-            <div>
+            <!-- Danh sách câu hỏi đang có -->
+            <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-slate-100">
                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-base font-bold text-slate-800">Danh Sách Câu Hỏi Hiện Có</h3>
-                    <button onclick="restoreDefaultQuestions()" class="text-xs text-sky-600 hover:text-sky-800 font-semibold underline">
-                        <i class="fa-solid fa-rotate"></i> Khôi phục câu hỏi mặc định
-                    </button>
+                    <h2 class="text-xl font-bold text-slate-800">📋 Danh Sách Câu Hỏi Hiện Có</h2>
+                    <button onclick="resetToDefaultQuestions()" class="text-sm text-red-600 hover:underline">Khôi phục mặc định</button>
                 </div>
-
-                <div id="questions-list-container" class="space-y-3">
-                    <!-- Danh sách câu hỏi hiển thị dạng Card -->
+                <div id="questions-list" class="space-y-4">
+                    <!-- Render danh sách quản lý -->
                 </div>
             </div>
-        </section>
+        </div>
+    </div>
 
-    </main>
-
-    <!-- App Application Logic -->
+    <!-- JavaScript xử lý logic -->
     <script>
-        // 1. Bộ câu hỏi mặc định ban đầu
-        const DEFAULT_QUESTIONS = [
+        // Dữ liệu mặc định
+        const defaultQuestions = [
             {
-                question: "Trong Agile, làm thế nào để nhóm phát triển đảm bảo rằng họ đang phát triển các tính năng có giá trị cao nhất trước tiên?",
+                question: "Mạng không dây là hệ thống các thiết bị có khả năng giao tiếp thông qua gì?",
                 options: [
-                    "Thực hiện phân tích chi tiết và xác định các tính năng dễ phát triển nhất để hoàn thành trước.",
-                    "Hoàn thành tất cả các tính năng nhỏ trước, sau đó chuyển sang các tính năng lớn hơn.",
-                    "Ưu tiên các tính năng theo thứ tự xuất hiện trong backlog mà không cần thay đổi.",
-                    "Làm việc chặt chẽ với Product Owner để liên tục đánh giá và sắp xếp lại backlog dựa trên giá trị kinh doanh và phản hồi của khách hàng."
-                ],
-                correct: 3,
-                explanation: "Product Backlog được Product Owner liên tục sắp xếp lại theo mức độ ưu tiên và giá trị thương mại để đảm bảo nhóm luôn mang lại giá trị cao nhất sớm nhất."
-            },
-            {
-                question: "Nếu bạn cần xây dựng phần mềm nội bộ với tiêu chí tiết kiệm, khả năng tùy biến cao, nhiều sự hỗ trợ từ cộng đồng nhà phát triển, bạn chọn mô hình nào?",
-                options: [
-                    "Mô hình sử dụng lại",
-                    "Mô hình Agile",
-                    "Mô hình hướng thành phần",
-                    "Mô hình mã nguồn mở"
-                ],
-                correct: 3,
-                explanation: "Mô hình mã nguồn mở (Open Source) tối ưu chi phí bản quyền, cho phép can thiệp mã nguồn để tùy biến cao và có cộng đồng lớn hỗ trợ."
-            },
-            {
-                question: "Khi muốn tích hợp hệ thống CRM mới với hệ thống ERP hiện có sử dụng các giao thức khác nhau trong kiến trúc SOA, phương pháp nào tốt nhất?",
-                options: [
-                    "Phát triển lại các hệ thống để chúng sử dụng cùng một giao thức.",
-                    "Tích hợp thủ công dữ liệu từ CRM vào ERP qua các kịch bản chuyển đổi hàng ngày.",
-                    "Tạm ngừng việc tích hợp cho đến khi tìm ra giải pháp tương thích.",
-                    "Sử dụng một dịch vụ trung gian (middleware) hoặc tầng tích hợp dịch vụ để cho phép các hệ thống giao tiếp mà không cần thay đổi các hệ thống hiện có."
-                ],
-                correct: 3,
-                explanation: "Tầng middleware trong SOA giúp chuyển đổi giao thức và ghép nối các hệ thống độc lập mà không cần phải viết lại mã nguồn hiện có."
-            },
-            {
-                question: "Trong Kỹ nghệ hướng thành phần (CBSE), nếu một thành phần gặp lỗi và cần thay thế, nhóm phát triển nên làm gì để đảm bảo tính liên tục?",
-                options: [
-                    "Liên hệ với nhà cung cấp thành phần lỗi và chờ phiên bản cập nhật.",
-                    "Viết lại thành phần lỗi từ đầu và chạy lại toàn bộ hệ thống.",
-                    "Tạm dừng hệ thống và biên dịch lại toàn bộ mã nguồn.",
-                    "Thay thế thành phần lỗi bằng một thành phần tương thích mới mà không cần tạm dừng hệ thống, nhờ khả năng thay thế động của CBSE."
-                ],
-                correct: 3,
-                explanation: "CBSE chuẩn hóa các giao diện (interfaces) hỗ trợ thay thế động (dynamic replacement) thành phần lỗi mà không cần dừng hay làm gián đoạn hệ thống."
-            },
-            {
-                question: "Mạng không dây là gì?",
-                options: [
-                    "Hệ thống thiết bị truyền tải dữ liệu sử dụng cáp quang tốc độ cao.",
-                    "Hệ thống các thiết bị có khả năng giao tiếp thông qua sóng điện từ.",
-                    "Hệ thống nối nối tiếp máy tính bằng dây cáp đồng trục.",
-                    "Hệ thống truyền dẫn âm thanh qua mạng điện thoại cố định."
+                    "Cáp quang đa mốt",
+                    "Sóng điện từ",
+                    "Đường truyền cáp đồng trục",
+                    "Tín hiệu dòng điện trực tiếp"
                 ],
                 correct: 1,
-                explanation: "Mạng không dây (Wireless Network) truyền nhận thông điệp qua không gian nhờ phương tiện sóng điện từ thay vì đường dây cáp."
+                explanation: "Mạng không dây truyền tải dữ liệu thông qua sóng điện từ (như sóng radio, hồng ngoại, vi ba) mà không cần cáp vật lý."
+            },
+            {
+                question: "Câu hỏi trọng tâm đặt ra trong slide khái niệm mạng không dây nhằm khám phá khía cạnh nào?",
+                options: [
+                    "Chi phí lắp đặt và bảo trì phần cứng.",
+                    "Lý do tồn tại (tại sao phải có) và lợi ích của mạng không dây.",
+                    "Tốc độ truyền tải tối đa của sóng điện từ.",
+                    "Các chuẩn bảo mật an toàn thông tin mạng."
+                ],
+                correct: 1,
+                explanation: "Slide đặt ra câu hỏi 'Tại sao phải có mạng không dây? Lợi ích của mạng không dây là gì?' để tìm hiểu lý do tồn tại và lợi ích thực tiễn."
             }
         ];
 
-        // 2. Khởi tạo State & LocalStorage
-        let quizQuestions = [];
-        let currentQuestionIndex = 0;
+        // Lấy câu hỏi từ LocalStorage hoặc dùng mặc định
+        let questions = JSON.parse(localStorage.getItem('mmtnc_questions')) || defaultQuestions;
+        let currentIdx = 0;
         let score = 0;
-        let userAnswers = [];
+        let answeredCurrent = false;
 
-        function loadQuestionsFromStorage() {
-            const storedData = localStorage.getItem('custom_quiz_questions');
-            if (storedData) {
-                try {
-                    quizQuestions = JSON.parse(storedData);
-                } catch(e) {
-                    quizQuestions = [...DEFAULT_QUESTIONS];
-                }
+        // Chuyển đổi tab
+        function switchTab(tab) {
+            const quizSec = document.getElementById('section-quiz');
+            const manageSec = document.getElementById('section-manage');
+            const tabQuiz = document.getElementById('tab-quiz');
+            const tabManage = document.getElementById('tab-manage');
+
+            if (tab === 'quiz') {
+                quizSec.classList.remove('hidden');
+                manageSec.classList.add('hidden');
+                tabQuiz.className = "px-6 py-2.5 rounded-lg font-medium transition-all bg-indigo-600 text-white shadow-md";
+                tabManage.className = "px-6 py-2.5 rounded-lg font-medium transition-all bg-white text-slate-600 hover:bg-slate-50 shadow-sm border border-slate-200";
+                loadQuiz();
             } else {
-                quizQuestions = [...DEFAULT_QUESTIONS];
-                saveQuestionsToStorage();
-            }
-            updateQuestionCountBadge();
-        }
-
-        function saveQuestionsToStorage() {
-            localStorage.setItem('custom_quiz_questions', JSON.stringify(quizQuestions));
-            updateQuestionCountBadge();
-        }
-
-        function restoreDefaultQuestions() {
-            if (confirm("Bạn có chắc chắn muốn xóa các câu hỏi tùy chỉnh và khôi phục về bộ câu hỏi mặc định?")) {
-                quizQuestions = [...DEFAULT_QUESTIONS];
-                saveQuestionsToStorage();
-                restartQuiz();
-                renderQuestionsManageList();
-                alert("Đã khôi phục thành công bộ câu hỏi mặc định!");
+                quizSec.classList.add('hidden');
+                manageSec.classList.remove('hidden');
+                tabManage.className = "px-6 py-2.5 rounded-lg font-medium transition-all bg-indigo-600 text-white shadow-md";
+                tabQuiz.className = "px-6 py-2.5 rounded-lg font-medium transition-all bg-white text-slate-600 hover:bg-slate-50 shadow-sm border border-slate-200";
+                renderManageList();
             }
         }
 
-        function updateQuestionCountBadge() {
-            document.getElementById('question-count-badge').textContent = quizQuestions.length;
-        }
+        // Tải câu hỏi cho màn hình Quiz
+        function loadQuiz() {
+            answeredCurrent = false;
+            document.getElementById('next-btn').classList.add('hidden');
+            document.getElementById('explanation-box').classList.add('hidden');
 
-        // 3. Quản lý Chuyển Đổi Tabs
-        function switchTab(tabName) {
-            const quizTab = document.getElementById('quiz-tab');
-            const manageTab = document.getElementById('manage-tab');
-            const quizBtn = document.getElementById('tab-quiz-btn');
-            const manageBtn = document.getElementById('tab-manage-btn');
-
-            if (tabName === 'quiz') {
-                quizTab.classList.remove('hidden');
-                manageTab.classList.add('hidden');
-                
-                quizBtn.className = "flex-1 py-3 px-4 text-center border-b-2 border-sky-600 text-sky-600 bg-white transition-all flex items-center justify-center gap-2";
-                manageBtn.className = "flex-1 py-3 px-4 text-center border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition-all flex items-center justify-center gap-2";
-            } else {
-                quizTab.classList.add('hidden');
-                manageTab.classList.remove('hidden');
-
-                manageBtn.className = "flex-1 py-3 px-4 text-center border-b-2 border-sky-600 text-sky-600 bg-white transition-all flex items-center justify-center gap-2";
-                quizBtn.className = "flex-1 py-3 px-4 text-center border-b-2 border-transparent text-slate-500 hover:text-slate-700 transition-all flex items-center justify-center gap-2";
-                
-                renderQuestionsManageList();
-            }
-        }
-
-        // 4. Logic Hiển Thị Quiz
-        function loadQuestion() {
-            const quizContent = document.getElementById("quiz-content");
-            const noQuestionsMsg = document.getElementById("no-questions-msg");
-            const resultScreen = document.getElementById("result-screen");
-
-            if (quizQuestions.length === 0) {
-                quizContent.classList.add("hidden");
-                resultScreen.classList.add("hidden");
-                noQuestionsMsg.classList.remove("hidden");
+            if (questions.length === 0) {
+                document.getElementById('question-progress').innerText = "Trống";
+                document.getElementById('question-title').innerText = "Hiện chưa có câu hỏi nào. Vui lòng sang tab 'Quản Lý Câu Hỏi' để thêm mới!";
+                document.getElementById('options-container').innerHTML = "";
                 return;
             }
 
-            quizContent.classList.remove("hidden");
-            noQuestionsMsg.classList.add("hidden");
-
-            const currentData = quizQuestions[currentQuestionIndex];
-            const selectedAnswer = userAnswers[currentQuestionIndex];
-
-            // Render text
-            document.getElementById("question-text").textContent = `Câu ${currentQuestionIndex + 1}: ${currentData.question}`;
-            document.getElementById("question-tracker").textContent = `Câu hỏi ${currentQuestionIndex + 1} / ${quizQuestions.length}`;
-            document.getElementById("score-tracker").textContent = `Điểm: ${score}`;
-            document.getElementById("progress-bar").style.width = `${((currentQuestionIndex + 1) / quizQuestions.length) * 100}%`;
-
-            const nextBtn = document.getElementById("next-btn");
-            nextBtn.disabled = selectedAnswer === null;
-            if (currentQuestionIndex === quizQuestions.length - 1) {
-                nextBtn.innerHTML = `Xem kết quả <i class="fa-solid fa-flag-checkered ml-1"></i>`;
-            } else {
-                nextBtn.innerHTML = `Câu tiếp theo <i class="fa-solid fa-arrow-right ml-1"></i>`;
+            if (currentIdx >= questions.length) {
+                currentIdx = 0;
             }
 
-            // Render Options A, B, C, D
-            const optionsContainer = document.getElementById("options-container");
-            optionsContainer.innerHTML = "";
-            const prefixes = ["A", "B", "C", "D"];
+            const q = questions[currentIdx];
+            document.getElementById('question-progress').innerText = `Câu ${currentIdx + 1} / ${questions.length}`;
+            document.getElementById('score-display').innerText = `Điểm: ${score}`;
+            document.getElementById('question-title').innerText = q.question;
 
-            currentData.options.forEach((optText, idx) => {
-                const btn = document.createElement("button");
-                btn.className = `option-btn w-full text-left p-3.5 rounded-xl border border-slate-200 flex items-start gap-3 text-xs sm:text-sm text-slate-700 font-medium hover:bg-slate-50 focus:outline-none`;
-                
-                btn.innerHTML = `
-                    <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-600 text-xs flex items-center justify-center font-bold flex-shrink-0 mt-0.5 border border-slate-300 px-1.5">${prefixes[idx]}</span>
-                    <span class="flex-1">${optText}</span>
-                `;
-
-                if (selectedAnswer !== null) {
-                    btn.disabled = true;
-                    btn.classList.remove("hover:bg-slate-50");
-
-                    if (idx === currentData.correct) {
-                        btn.className += " bg-emerald-50 border-emerald-500 text-emerald-900 font-semibold";
-                        btn.querySelector('span').className += " bg-emerald-500 text-white border-emerald-500";
-                    } else if (idx === selectedAnswer && selectedAnswer !== currentData.correct) {
-                        btn.className += " bg-rose-50 border-rose-500 text-rose-900";
-                        btn.querySelector('span').className += " bg-rose-500 text-white border-rose-500";
-                    }
-                } else {
-                    btn.onclick = () => selectOption(idx);
-                }
-
-                optionsContainer.appendChild(btn);
+            let html = "";
+            q.options.forEach((opt, idx) => {
+                html += `<button onclick="selectAnswer(${idx})" id="opt-${idx}" class="w-full text-left p-4 rounded-xl border border-slate-200 hover:bg-indigo-50 hover:border-indigo-300 transition-all font-medium text-slate-700">${String.fromCharCode(65 + idx)}. ${opt}</button>`;
             });
-
-            // Feedback display
-            const feedbackBox = document.getElementById("feedback-box");
-            if (selectedAnswer !== null) {
-                showFeedback(selectedAnswer === currentData.correct, currentData.explanation);
-            } else {
-                feedbackBox.classList.add("hidden");
-            }
+            document.getElementById('options-container').innerHTML = html;
         }
 
-        function selectOption(idx) {
-            const currentData = quizQuestions[currentQuestionIndex];
-            userAnswers[currentQuestionIndex] = idx;
-            if (idx === currentData.correct) {
+        // Xử lý chọn đáp án
+        function selectAnswer(selectedIdx) {
+            if (answeredCurrent) return;
+            answeredCurrent = true;
+
+            const q = questions[currentIdx];
+            const correctIdx = q.correct;
+            const explanationBox = document.getElementById('explanation-box');
+
+            for (let i = 0; i < 4; i++) {
+                const btn = document.getElementById(`opt-${i}`);
+                if (!btn) continue;
+                btn.disabled = true;
+                if (i === correctIdx) {
+                    btn.className = "w-full text-left p-4 rounded-xl border border-emerald-500 bg-emerald-50 text-emerald-800 font-medium";
+                } else if (i === selectedIdx) {
+                    btn.className = "w-full text-left p-4 rounded-xl border border-rose-500 bg-rose-50 text-rose-800 font-medium";
+                } else {
+                    btn.className = "w-full text-left p-4 rounded-xl border border-slate-200 opacity-50 text-slate-500";
+                }
+            }
+
+            if (selectedIdx === correctIdx) {
                 score++;
-            }
-            loadQuestion();
-        }
-
-        function showFeedback(isCorrect, explanation) {
-            const feedbackBox = document.getElementById("feedback-box");
-            const feedbackStatus = document.getElementById("feedback-status");
-            const explanationText = document.getElementById("explanation-text");
-
-            feedbackBox.classList.remove("hidden");
-            if (isCorrect) {
-                feedbackBox.className = "p-4 rounded-xl border mb-6 fade-in bg-emerald-50 border-emerald-200 text-emerald-900";
-                feedbackStatus.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 text-lg"></i> Đáp án chính xác!`;
+                explanationBox.className = "mb-6 p-4 rounded-xl text-sm border border-emerald-200 bg-emerald-50 text-emerald-800";
+                explanationBox.innerHTML = `<strong>Chính xác! 🎉</strong><br>${q.explanation}`;
             } else {
-                feedbackBox.className = "p-4 rounded-xl border mb-6 fade-in bg-rose-50 border-rose-200 text-rose-900";
-                feedbackStatus.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-600 text-lg"></i> Đáp án chưa chính xác`;
+                explanationBox.className = "mb-6 p-4 rounded-xl text-sm border border-rose-200 bg-rose-50 text-rose-800";
+                explanationBox.innerHTML = `<strong>Chưa chính xác! ❌</strong><br>${q.explanation}`;
             }
-            explanationText.textContent = explanation || "Không có lời giải thích thêm.";
+            explanationBox.classList.remove('hidden');
+            document.getElementById('score-display').innerText = `Điểm: ${score}`;
+            document.getElementById('next-btn').classList.remove('hidden');
         }
 
-        function prevQuestion() {
-            if (currentQuestionIndex > 0) {
-                currentQuestionIndex--;
-                loadQuestion();
-            }
-        }
-
+        // Chuyển câu tiếp theo
         function nextQuestion() {
-            if (currentQuestionIndex < quizQuestions.length - 1) {
-                currentQuestionIndex++;
-                loadQuestion();
-            } else {
-                showResults();
+            currentIdx++;
+            if (currentIdx >= questions.length) {
+                currentIdx = 0;
             }
+            loadQuiz();
         }
 
-        function showResults() {
-            document.getElementById("quiz-content").classList.add("hidden");
-            const resultScreen = document.getElementById("result-screen");
-            resultScreen.classList.remove("hidden");
-
-            const finalScore = document.getElementById("final-score");
-            const finalPercentage = document.getElementById("final-percentage");
-            const feedbackMessage = document.getElementById("feedback-message");
-
-            const percentage = Math.round((score / quizQuestions.length) * 100) || 0;
-            finalScore.textContent = `${score} / ${quizQuestions.length}`;
-            finalPercentage.textContent = `Tỷ lệ chính xác: ${percentage}%`;
-
-            if (percentage === 100) {
-                feedbackMessage.textContent = "Xuất sắc! Bạn đã trả lời đúng tất cả các câu hỏi!";
-                feedbackMessage.className = "mt-4 pt-3 border-t border-slate-200 text-sm font-semibold text-emerald-600";
-            } else if (percentage >= 60) {
-                feedbackMessage.textContent = "Kết quả khá tốt! Hãy ôn lại các câu trả lời sai nhé.";
-                feedbackMessage.className = "mt-4 pt-3 border-t border-slate-200 text-sm font-semibold text-sky-600";
-            } else {
-                feedbackMessage.textContent = "Cần cố gắng thêm! Đọc kỹ phần giải thích chi tiết để cải thiện.";
-                feedbackMessage.className = "mt-4 pt-3 border-t border-slate-200 text-sm font-semibold text-rose-600";
-            }
-        }
-
-        function restartQuiz() {
-            currentQuestionIndex = 0;
-            score = 0;
-            userAnswers = new Array(quizQuestions.length).fill(null);
-            document.getElementById("result-screen").classList.add("hidden");
-            loadQuestion();
-        }
-
-        // 5. Logic Thêm, Sửa & Xóa Câu Hỏi
-        function handleFormSubmit(event) {
-            event.preventDefault();
-
-            const editIndex = parseInt(document.getElementById('edit-index').value);
-            const questionVal = document.getElementById('form-question').value.trim();
-            const opt0 = document.getElementById('form-opt-0').value.trim();
-            const opt1 = document.getElementById('form-opt-1').value.trim();
-            const opt2 = document.getElementById('form-opt-2').value.trim();
-            const opt3 = document.getElementById('form-opt-3').value.trim();
-            const correctVal = parseInt(document.getElementById('form-correct').value);
-            const explanationVal = document.getElementById('form-explanation').value.trim();
-
-            const questionData = {
-                question: questionVal,
-                options: [opt0, opt1, opt2, opt3],
-                correct: correctVal,
-                explanation: explanationVal
-            };
-
-            if (editIndex >= 0) {
-                // Cập nhật câu hỏi hiện có
-                quizQuestions[editIndex] = questionData;
-                alert('Đã cập nhật câu hỏi thành công!');
-            } else {
-                // Thêm câu hỏi mới
-                quizQuestions.push(questionData);
-                alert('Đã thêm câu hỏi thành công!');
+        // Render danh sách quản lý câu hỏi
+        function renderManageList() {
+            const listContainer = document.getElementById('questions-list');
+            if (questions.length === 0) {
+                listContainer.innerHTML = "<p class='text-slate-500 text-center py-4'>Chưa có câu hỏi nào trong hệ thống.</p>";
+                return;
             }
 
-            saveQuestionsToStorage();
-            cancelEdit();
-            renderQuestionsManageList();
-            restartQuiz();
+            let html = "";
+            questions.forEach((q, idx) => {
+                html += `
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+                        <div class="flex justify-between items-start">
+                            <span class="font-bold text-indigo-600 text-sm">Câu ${idx + 1}</span>
+                            <div class="space-x-2">
+                                <button onclick="editQuestion(${idx})" class="text-xs bg-amber-500 hover:bg-amber-600 text-white px-3 py-1 rounded-lg">Sửa</button>
+                                <button onclick="deleteQuestion(${idx})" class="text-xs bg-rose-500 hover:bg-rose-600 text-white px-3 py-1 rounded-lg">Xóa</button>
+                            </div>
+                        </div>
+                        <p class="font-medium text-slate-800">${q.question}</p>
+                        <ul class="text-sm text-slate-600 grid grid-cols-1 md:grid-cols-2 gap-1 pl-4 list-disc">
+                            ${q.options.map((o, oIdx) => `<li class="${oIdx === q.correct ? 'text-emerald-700 font-semibold' : ''}">${o}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            });
+            listContainer.innerHTML = html;
         }
 
-        function editQuestion(index) {
-            const q = quizQuestions[index];
-            if (!q) return;
+        // Thêm hoặc Cập nhật câu hỏi từ form
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const editIdx = parseInt(document.getElementById('edit-index').value);
+            const questionText = document.getElementById('input-question').value;
+            const options = [
+                document.getElementById('input-opt-0').value,
+                document.getElementById('input-opt-1').value,
+                document.getElementById('input-opt-2').value,
+                document.getElementById('input-opt-3').value
+            ];
+            const correct = parseInt(document.getElementById('input-correct').value);
+            const explanation = document.getElementById('input-explanation').value;
 
-            document.getElementById('edit-index').value = index;
-            document.getElementById('form-question').value = q.question;
-            document.getElementById('form-opt-0').value = q.options[0] || '';
-            document.getElementById('form-opt-1').value = q.options[1] || '';
-            document.getElementById('form-opt-2').value = q.options[2] || '';
-            document.getElementById('form-opt-3').value = q.options[3] || '';
-            document.getElementById('form-correct').value = q.correct;
-            document.getElementById('form-explanation').value = q.explanation || '';
+            const newQ = { question: questionText, options, correct, explanation };
 
-            // Update UI cho form
-            document.getElementById('form-title').innerHTML = `<i class="fa-solid fa-pen-to-square text-amber-500"></i> Chỉnh Sửa Câu Hỏi #${index + 1}`;
-            document.getElementById('submit-form-btn').className = "w-full py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg shadow transition-all text-sm flex items-center justify-center gap-2";
-            document.getElementById('submit-form-btn').innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Lưu Thay Đổi`;
+            if (editIdx === -1) {
+                questions.push(newQ);
+            } else {
+                questions[editIdx] = newQ;
+            }
+
+            localStorage.setItem('mmtnc_questions', JSON.stringify(questions));
+            resetForm();
+            renderManageList();
+            alert("Đã lưu câu hỏi thành công!");
+        }
+
+        // Sửa câu hỏi
+        function editQuestion(idx) {
+            const q = questions[idx];
+            document.getElementById('edit-index').value = idx;
+            document.getElementById('input-question').value = q.question;
+            for (let i = 0; i < 4; i++) {
+                document.getElementById(`input-opt-${i}`).value = q.options[i];
+            }
+            document.getElementById('input-correct').value = q.correct;
+            document.getElementById('input-explanation').value = q.explanation;
+
+            document.getElementById('form-title').innerText = `✏️ Chỉnh Sửa Câu Hỏi #${idx + 1}`;
+            document.getElementById('submit-btn').innerText = "Cập Nhật";
             document.getElementById('cancel-edit-btn').classList.remove('hidden');
-
-            // Cuộn lên form
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function cancelEdit() {
+        // Xóa câu hỏi
+        function deleteQuestion(idx) {
+            if (confirm("Bạn có chắc chắn muốn xóa câu hỏi này không?")) {
+                questions.splice(idx, 1);
+                localStorage.setItem('mmtnc_questions', JSON.stringify(questions));
+                renderManageList();
+            }
+        }
+
+        // Reset form
+        function resetForm() {
+            document.getElementById('question-form').reset();
             document.getElementById('edit-index').value = "-1";
-            document.getElementById('add-question-form').reset();
-            
-            document.getElementById('form-title').innerHTML = `<i class="fa-solid fa-square-plus text-sky-600"></i> Thêm Câu Hỏi Mới`;
-            document.getElementById('submit-form-btn').className = "w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg shadow transition-all text-sm flex items-center justify-center gap-2";
-            document.getElementById('submit-form-btn').innerHTML = `<i class="fa-solid fa-plus"></i> Lưu & Thêm Câu Hỏi`;
+            document.getElementById('form-title').innerText = "➕ Thêm Câu Hỏi Mới";
+            document.getElementById('submit-btn').innerText = "Lưu Câu Hỏi";
             document.getElementById('cancel-edit-btn').classList.add('hidden');
         }
 
-        function deleteQuestion(index) {
-            if (confirm(`Bạn có muốn xóa câu hỏi số ${index + 1} không?`)) {
-                quizQuestions.splice(index, 1);
-                saveQuestionsToStorage();
-                cancelEdit();
-                renderQuestionsManageList();
-                restartQuiz();
+        // Khôi phục mặc định
+        function resetToDefaultQuestions() {
+            if (confirm("Khôi phục lại các câu hỏi mặc định ban đầu?")) {
+                questions = [...defaultQuestions];
+                localStorage.setItem('mmtnc_questions', JSON.stringify(questions));
+                renderManageList();
+                loadQuiz();
             }
         }
 
-        function renderQuestionsManageList() {
-            const container = document.getElementById('questions-list-container');
-            container.innerHTML = "";
-
-            if (quizQuestions.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-400 italic text-center py-4">Chưa có câu hỏi nào trong hệ thống.</p>`;
-                return;
-            }
-
-            quizQuestions.forEach((q, idx) => {
-                const card = document.createElement('div');
-                card.className = "p-4 bg-white rounded-xl border border-slate-200 flex justify-between items-start gap-3 shadow-sm hover:border-slate-300 transition-all text-xs sm:text-sm";
-                
-                const prefixes = ["A", "B", "C", "D"];
-                card.innerHTML = `
-                    <div class="space-y-1 flex-1">
-                        <div class="font-bold text-slate-800">Câu ${idx + 1}: ${q.question}</div>
-                        <div class="text-slate-500 font-medium">Đáp án đúng: <span class="text-emerald-600 font-bold">${prefixes[q.correct]}. ${q.options[q.correct]}</span></div>
-                        ${q.explanation ? `<div class="text-slate-400 italic text-xs">Giải thích: ${q.explanation}</div>` : ''}
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="editQuestion(${idx})" class="text-amber-500 hover:text-amber-700 p-1.5 rounded-lg hover:bg-amber-50 transition-colors" title="Sửa câu hỏi">
-                            <i class="fa-solid fa-pen"></i>
-                        </button>
-                        <button onclick="deleteQuestion(${idx})" class="text-rose-500 hover:text-rose-700 p-1.5 rounded-lg hover:bg-rose-50 transition-colors" title="Xóa câu hỏi">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        // Khởi chạy khi tải trang
-        window.onload = function() {
-            loadQuestionsFromStorage();
-            userAnswers = new Array(quizQuestions.length).fill(null);
-            loadQuestion();
-        };
+        // Khởi chạy ban đầu
+        loadQuiz();
     </script>
 </body>
 </html>
